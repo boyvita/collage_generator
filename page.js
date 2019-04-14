@@ -19,21 +19,20 @@ saveButton.value = "Save";
 saveButton.id = "save";
 saveButton.type = "button";
 body.appendChild(saveButton);
+addGenerateListener();
 genCollagePromise();
 genQuotePromise();
 executed = 1;
-$("#generate").click(() => {
-  if (executed) {
-		executed = 0;
-    drawCollage(drawQuote);
-		executed = 1;
-  }
-});
+function addGenerateListener() {
+  $("#generate").one("click", () => {
+    collagePromise.then(() => quotePromise.then(() => drawCollage(drawQuote)));
+  });
+}
 
 $("#save").click(() => {
   var link = document.createElement("a");
   link.download = "collage.png";
-  link.href = canvas.toDataURL(); //"image/png").replace("image/png", "image/octet-stream"); ;
+  link.href = canvas.toDataURL();
   link.click();
 });
 
@@ -56,6 +55,7 @@ function genCollage(resolve) {
   let pics = [];
   for (let i = 0; i < 4; i++) {
     pics[i] = { img: new Image() };
+    pics[i].img.crossOrigin = "anonymous";
   }
   let xline = Math.floor(maxx * (0.3 + 0.4 * Math.random()));
   let yline = Math.floor(maxy * (0.3 + 0.4 * Math.random()));
@@ -68,7 +68,6 @@ function genCollage(resolve) {
   let context = canvas.getContext("2d");
   for (i = 0; i < 4; i++) {
     let pic = pics[i];
-    pics[i].crossOrigin = "anonymous";
     pic.img.src =
       "https://source.unsplash.com/random/" +
       pic.szx +
@@ -109,7 +108,7 @@ function drawCollage(callback) {
   });
 }
 
-function drawQuote(callback) {
+function drawQuote() {
   let context = canvas.getContext("2d");
   let maxx = canvas.width;
   let maxy = canvas.height;
@@ -149,6 +148,7 @@ function drawQuote(callback) {
       context.lineWidth = 1;
       context.fillText(lines[i], x, y);
     }
+    addGenerateListener();
     genQuotePromise();
   });
 }
