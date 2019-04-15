@@ -116,18 +116,18 @@ function drawQuote() {
   quotePromise.then(result => {
     quoteText = result.quoteText;
     quoteAuthor = result.quoteAuthor;
-    let words = quoteText.split(" ");
+    let words = quoteText.split(' ');
     console.log(words);
     let lines = [];
-    let line = "";
+    let line = '';
     for (let i = 0; i < words.length; i++) {
       let newLine = line + words[i];
       let newLineWidth = context.measureText(newLine).width;
       if (newLineWidth > maxLineWidth) {
         lines.push(line);
-        line = words[i] + " ";
+        line = words[i] + ' ';
       } else {
-        line = newLine + " ";
+        line = newLine + ' ';
       }
     }
     lines.push(line);
